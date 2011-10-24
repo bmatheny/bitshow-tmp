@@ -15,8 +15,8 @@ libraryDependencies ++= Seq(
    "org.processing" % "core" % "1.1",
 //   "com.mongodb.casbah" %% "casbah" % "2.2.0-SNAPSHOT",
    "org.scala-tools.testing" % "specs_2.8.0" % "1.6.5" % "test",
-   "org.sedis" % "sedis_2.9.1" % "1.0",
-   "commons-codec" %% "commons-codec" % "1.5"
+   "org.sedis" % "sedis_2.9.1" % "1.0"
+//   "commons-codec" %% "commons-codec" % "1.5"
 )
 
 resolvers ++= Seq(

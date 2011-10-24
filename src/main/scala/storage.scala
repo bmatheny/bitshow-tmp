@@ -2,8 +2,8 @@ package bitshow
 
 import org.sedis._
 import redis.clients.jedis._
-import org.apache.commons.codec.digest.DigestUtils._
-import org.apache.commons.codec.binary.Base64._
+import org.apache.commons.codec.digest.DigestUtils
+import org.apache.commons.codec.binary.Base64
 
 case class Item(contentType: String, bytes: Array[Byte])
 
@@ -32,24 +32,25 @@ trait VectorStore extends Storage { self =>
 class RedisStorage extends Storage {
   
   val pool = new Pool(new JedisPool(new JedisPoolConfig(), "localhost", 6379, 2000));
-  val baser = new Base64()
 
   override def get(id: String): Option[Item] = {
+    val hash = "suck"
     val res = pool.withClient { client =>
        client.get(id) match {
-          s: String => Some(Item(hash, baser.decodeBase64String(filebytes)))
-          _ => None
+         case Some(s) => Some(Item(hash, Base64.decodeBase64(s)))
+         case _ => None
        }
     }
     return res
   }
   override def put(item: Item): String = {
-    val hash = pool.withClient { client =>
+    pool.withClient { client =>
         val hash = DigestUtils.sha256Hex(item.bytes)
-        val filebytes = baser.encodeBase64String(item.bytes)
+        val filebytes = Base64.encodeBase64String(item.bytes)
         client.set(hash, filebytes)
         hash
     }
-    hash
   }
+  override def list(): List[Item] = Nil
+
 }   
