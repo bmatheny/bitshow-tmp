@@ -57,7 +57,7 @@ class MagickRequest (
     MagickRequest.MAGICK_PATH
 
   private def getTemporaryFile =
-    File.createTempFile("bitshow", "img")
+    File.createTempFile("bitshow", ".png")
 
   private def writeBytesToTemporaryFile(input: InputStream) = {
     val bufferedIn = new BufferedInputStream(input)
@@ -67,16 +67,21 @@ class MagickRequest (
     @annotation.tailrec()
     def readByte() {
       bufferedOut.write(bufferedIn.read)
-
+      
       if(bufferedIn.available() > 0)
         readByte()
     }
+
+    readByte()
+    
+    bufferedOut.close()
+    bufferedIn.close()
 
     outFile
   }
 
   private def readBytesFromFile(file: File) =
-    Source.fromFile(file).toArray[Char]
+    Source.fromFile(file)(scala.io.Codec.ISO8859).map(_.toByte).toArray
 
   def buildCommandLine(inputFile: File, outputFile: File) =
     getConvertPath+" "+inputFile.getAbsolutePath+" "+args+" "+outputFile.getAbsolutePath
@@ -89,13 +94,11 @@ class MagickRequest (
   def execute(inputFile: String, outputFile: String): Int =
     execute(new File(inputFile), new File(outputFile))
 
-  def execute(input: InputStream): Array[Char] = {
+  def execute(input: InputStream): Array[Byte] = {
     val inputFile = writeBytesToTemporaryFile(input)
     val outputFile = getTemporaryFile
 
     val exitCode = execute(inputFile, outputFile)
-    println("EXIT CODE: "+exitCode)
-
     readBytesFromFile(outputFile)
   }
 
