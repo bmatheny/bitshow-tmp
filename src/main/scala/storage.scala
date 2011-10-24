@@ -10,6 +10,7 @@ case class Item(contentType: String, bytes: Array[Byte])
 trait Storage {
   def get(id: String): Option[Item]
   def put(item: Item): String
+  def list(): List[Item]
 }
 
 object DefaultStore extends VectorStore
@@ -25,7 +26,8 @@ trait VectorStore extends Storage { self =>
       vector = vector :+ bytes
       (vector.length - 1).toString
     }
-} 
+  def list(): List[Item] = vector.toList
+}
 
 class RedisStorage extends Storage {
   
