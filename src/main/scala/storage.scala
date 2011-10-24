@@ -21,4 +21,5 @@ trait VectorStore extends Storage { self =>
       vector = vector :+ bytes
       (vector.length - 1).toString
     }
+  def list(): List[Item] = vector.toList
 }
