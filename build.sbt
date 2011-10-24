@@ -13,7 +13,8 @@ libraryDependencies ++= Seq(
    "net.databinder" %% "unfiltered-uploads" % "0.4.1",
    "org.clapper" %% "avsl" % "0.3.3",
    "org.processing" % "core" % "1.1",
-   "com.mongodb.casbah" %% "casbah" % "2.2.0-SNAPSHOT"
+   "com.mongodb.casbah" %% "casbah" % "2.2.0-SNAPSHOT",
+   "org.scala-tools.testing" % "specs_2.8.0" % "1.6.5" % "test"
 )
 
 resolvers ++= Seq(
