@@ -18,6 +18,9 @@ object MagickResize
 object MagickBlackAndWhite
   extends MagickRequest("blackwhite", "-black -white")
 
+/**
+ * Unused
+ */
 class ArgStack {
   val stringBuffer = new StringBuffer
 
@@ -56,7 +59,7 @@ class MagickRequest (
   private def getTemporaryFile =
     File.createTempFile("bitshow", "img")
 
-  private def writeBytesToTemporaryFile(input: ByteArrayInputStream) = {
+  private def writeBytesToTemporaryFile(input: InputStream) = {
     val bufferedIn = new BufferedInputStream(input)
     val outFile = getTemporaryFile
     val bufferedOut = new BufferedOutputStream(new FileOutputStream(outFile))
@@ -78,13 +81,19 @@ class MagickRequest (
   def buildCommandLine(inputFile: File, outputFile: File) =
     getConvertPath+" "+inputFile.getAbsolutePath+" "+args+" "+outputFile.getAbsolutePath
 
-  def execute(input: ByteArrayInputStream) = {
+  def execute(inputFile: File, outputFile: File): Int = {
+    import scala.sys.process._
+    (buildCommandLine(inputFile, outputFile)) !
+  }
+
+  def execute(inputFile: String, outputFile: String): Int =
+    execute(new File(inputFile), new File(outputFile))
+
+  def execute(input: InputStream): Array[Char] = {
     val inputFile = writeBytesToTemporaryFile(input)
     val outputFile = getTemporaryFile
 
-    import scala.sys.process._
-    val exitCode = (buildCommandLine(inputFile, outputFile)) !
-
+    val exitCode = execute(inputFile, outputFile)
     println("EXIT CODE: "+exitCode)
 
     readBytesFromFile(outputFile)
